@@ -137,7 +137,7 @@ public class RobotRace extends Base {
      */
     @Override
     public void initialize() {
-		
+	
         // Enable blending.
         gl.glEnable(GL_BLEND);
         gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -146,7 +146,7 @@ public class RobotRace extends Base {
         gl.glEnable(GL_DEPTH_TEST);
         gl.glDepthFunc(GL_LESS);
 		
-	    // Normalize normals.
+	// Normalize normals.
         gl.glEnable(GL_NORMALIZE);
         
         // Enable textures. 
@@ -154,7 +154,7 @@ public class RobotRace extends Base {
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
         gl.glBindTexture(GL_TEXTURE_2D, 0);
 		
-	    // Try to load four textures, add more if you like.
+	// Try to load four textures, add more if you like.
         track = loadTexture("track.jpg");
         brick = loadTexture("brick.jpg");
         head = loadTexture("head.jpg");
@@ -175,7 +175,7 @@ public class RobotRace extends Base {
 
         // Set the perspective.
         // Modify this to meet the requirements in the assignment.
-        glu.gluPerspective(40, (float)gs.w / (float)gs.h, 0.1, 100);
+        glu.gluPerspective(gs.vWidth, (float)gs.w / (float)gs.h, 0.1*gs.vDist, 100*gs.vDist);
         
         // Set camera.
         gl.glMatrixMode(GL_MODELVIEW);
@@ -247,7 +247,54 @@ public class RobotRace extends Base {
      * and origin (yellow).
      */
     public void drawAxisFrame() {
-        // code goes here ...
+        // draw original point
+        gl.glColor3f(1,1,0);
+        glut.glutSolidSphere(0.05f, 10, 10);       
+        
+        // draw x axis
+        gl.glColor3f(1, 0, 0);   
+        gl.glPushMatrix();          
+        gl.glScalef(100f, 1f, 1f);
+        gl.glTranslatef(0.005f, 0f, 0f);
+        glut.glutSolidCube(0.01f);
+        gl.glPopMatrix();
+        // draw x axis arrow
+        gl.glColor3f(0,0,0);
+        gl.glPushMatrix();    
+        gl.glRotatef(90f, 0f, 1f, 0f);
+        gl.glTranslatef(0f, 0f, 1f);
+        glut.glutSolidCone(0.05f, 0.2f, 10, 10);            
+        gl.glPopMatrix();
+        
+        // draw y axis
+        gl.glColor3f(0, 1, 0);   
+        gl.glPushMatrix();          
+        gl.glScalef(1f, 100f, 1f);
+        gl.glTranslatef(0f, 0.005f, 0f);
+        glut.glutSolidCube(0.01f);
+        gl.glPopMatrix();
+        // draw y axis arrow
+        gl.glColor3f(0,0,0);
+        gl.glPushMatrix();    
+        gl.glRotatef(-90f, 1f, 0f, 0f);
+        gl.glTranslatef(0f, 0f, 1f);
+        glut.glutSolidCone(0.05f, 0.2f, 10, 10);            
+        gl.glPopMatrix();
+        
+        // draw z axis
+        gl.glColor3f(0, 0, 1);   
+        gl.glPushMatrix();          
+        gl.glScalef(1f, 1f, 100f);
+        gl.glTranslatef(0f, 0f, 0.005f);
+        glut.glutSolidCube(0.01f);
+        gl.glPopMatrix();
+        // draw z axis arrow
+        gl.glColor3f(0,0,0);
+        gl.glPushMatrix();    
+        gl.glRotatef(-90f, 0f, 0f, 1f);
+        gl.glTranslatef(0f, 0f, 1f);
+        glut.glutSolidCone(0.05f, 0.2f, 10, 10);            
+        gl.glPopMatrix();
     }
  
     /**

@@ -52,7 +52,11 @@ class Camera {
      * Computes eye, center, and up, based on the camera's default mode.
      */
     private void setDefaultMode(GlobalState gs) {
-        // code goes here ...
+        center = gs.cnt;
+        // I'm more familiar with non-inverting axis so - angle here
+        eye.x = gs.cnt.x + gs.vDist*Math.sin(-gs.phi)*Math.cos(-gs.theta);
+        eye.y = gs.cnt.y + gs.vDist*Math.sin(-gs.phi)*Math.sin(-gs.theta);
+        eye.z = gs.cnt.z + gs.vDist*Math.cos(-gs.phi);
     }
 
     /**
