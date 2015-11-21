@@ -35,7 +35,7 @@ class Robot {
     /**
      * Constructs the robot with initial parameters.
      */
-    public Robot(GL2 gl,Material material
+    public Robot(Material material
         /* add other parameters that characterize this robot */) {
         this.material = material;
         // code goes here ...
@@ -88,8 +88,7 @@ class Robot {
         {
             Initialized = true;
             InitializeVBO(gl);
-        }
-        
+        }       
         gl.glEnable(gl.GL_LIGHTING);
         gl.glEnable(gl.GL_LIGHT0);
         float lightPos[] = {2.0f,0.0f,3.0f,0.0f};
