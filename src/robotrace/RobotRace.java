@@ -250,7 +250,7 @@ public class RobotRace extends Base {
     public void drawAxisFrame() {
         // draw original point
         gl.glColor3f(1,1,0);
-        glut.glutSolidSphere(0.05f, 10, 10);       
+        glut.glutSolidSphere(0.025f, 50, 50);       
         
         // draw x axis
         gl.glColor3f(1, 0, 0);   
@@ -264,7 +264,7 @@ public class RobotRace extends Base {
         gl.glPushMatrix();    
         gl.glRotatef(90f, 0f, 1f, 0f);
         gl.glTranslatef(0f, 0f, 1f);
-        glut.glutSolidCone(0.05f, 0.2f, 10, 10);            
+        glut.glutSolidCone(0.025f, 0.1f, 50, 50);            
         gl.glPopMatrix();
         
         // draw y axis
@@ -279,7 +279,7 @@ public class RobotRace extends Base {
         gl.glPushMatrix();    
         gl.glRotatef(-90f, 1f, 0f, 0f);
         gl.glTranslatef(0f, 0f, 1f);
-        glut.glutSolidCone(0.05f, 0.2f, 10, 10);            
+        glut.glutSolidCone(0.025f, 0.1f, 50, 50);            
         gl.glPopMatrix();
         
         // draw z axis
@@ -294,7 +294,7 @@ public class RobotRace extends Base {
         gl.glPushMatrix();    
         gl.glRotatef(-90f, 0f, 0f, 1f);
         gl.glTranslatef(0f, 0f, 1f);
-        glut.glutSolidCone(0.05f, 0.2f, 10, 10);            
+        glut.glutSolidCone(0.025f, 0.1f, 50, 50);            
         gl.glPopMatrix();
     }
  
