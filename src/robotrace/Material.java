@@ -10,20 +10,20 @@ public enum Material {
      * Modify the default values to make it look like gold.
      */
     GOLD (
-        new float[] {0.24725f,0.2245f,0.0645f,1f},
-        new float[] {0.34615f, 0.3143f, 0.0903f, 1.0f},
-        new float[] {0.797357f, 0.723991f, 0.208006f, 1.0f},
-        83.2f),
+        new float[] {0.24725f, 0.1995f, 0.0745f, 1f},
+        new float[] {0.75164f, 0.60648f, 0.22648f, 1.0f},
+        new float[] {0.628281f, 0.555802f, 0.366065f, 1.0f},
+        51.2f),
 
     /**
      * Silver material properties.
      * Modify the default values to make it look like silver.
      */
     SILVER (
-        new float[] {0.23125f,0.23125f,0.23125f,1f},
-        new float[] {0.2775f, 0.2775f, 0.2775f, 1.0f},
-        new float[] {0.773911f, 0.773911f, 0.773911f, 1.0f},
-        89.6f),
+        new float[] {0.19225f,0.19225f,0.19225f,1f},
+        new float[] {0.50754f, 0.50754f, 0.50754f, 1.0f},
+        new float[] {0.508273f, 0.508273f, 0.508273f, 1.0f},
+        51.2f),
 
     /** 
      * Wood material properties.
@@ -33,16 +33,16 @@ public enum Material {
         new float[] {0.411764f,0.2f,0.0f,1f},
         new float[] {0.411764f,0.2f,0.0f,1f},
         new float[] {0.0f, 0.0f, 0.0f, 1.0f},
-        83.2f),
+        32f),
 
     /**
      * Orange material properties.
      * Modify the default values to make it look like orange.
      */
     ORANGE (
-        new float[] {1.0f, 0.5f,0.0f,1f},
-        new float[] {1.0f, 0.5f, 0.0f, 1.0f},
-        new float[] {0.6f, 0.6f, 0.5f, 1.0f},
+        new float[] {1.0f, 0.4f,0.0f,1f},
+        new float[] {1.0f, 0.4f, 0.0f, 1.0f},
+        new float[] {1.0f, 0.7f, 0.0f, 1.0f},
         32f);
 
     float[] ambient;
