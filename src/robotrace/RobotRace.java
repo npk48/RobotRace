@@ -146,7 +146,7 @@ public class RobotRace extends Base {
         gl.glEnable(GL_DEPTH_TEST);
         gl.glDepthFunc(GL_LESS);
 		
-	// Normalize normals.
+	    // Normalize normals.
         gl.glEnable(GL_NORMALIZE);
         
         // Enable textures. 
@@ -154,7 +154,7 @@ public class RobotRace extends Base {
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
         gl.glBindTexture(GL_TEXTURE_2D, 0);
 		
-	// Try to load four textures, add more if you like.
+	    // Try to load four textures, add more if you like.
         track = loadTexture("track.jpg");
         brick = loadTexture("brick.jpg");
         head = loadTexture("head.jpg");
@@ -212,14 +212,42 @@ public class RobotRace extends Base {
         if (gs.showAxes) {
             drawAxisFrame();
         }
-        // add lighting here
+        // Enable light
+        gl.glEnable(gl.GL_LIGHTING);  
+        // Enable light source 0
+        gl.glEnable(gl.GL_LIGHT0);    
+        // Set light souce position from camera direction but infinite
+        float lightPos[] = {(float)camera.eye.x,(float)camera.eye.y,(float)camera.eye.z,0.0f};
+        // Obtain the vector from camera to view
+        Vector direction = new Vector(gs.cnt.x-camera.eye.x,gs.cnt.y-camera.eye.y,gs.cnt.z-camera.eye.z);
+        // Rotate to up-left by 10 degree
+        direction.y -= gs.vDist*Math.cos(45)*Math.tan(10);
+        direction.z -= gs.vDist*Math.sin(45)*Math.tan(10);
+        float lightDirection[]= { (float)direction.x, (float)direction.y, (float)direction.z };      
+        // Set light color to white
+        float lightColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+        // Apply light       
+        gl.glLightfv(gl.GL_LIGHT0,gl.GL_POSITION,lightPos,0);
+        gl.glLightfv(gl.GL_LIGHT0,gl.GL_SPOT_DIRECTION, lightDirection,0);
+        gl.glLightfv(gl.GL_LIGHT0,gl.GL_AMBIENT,lightColor,0);        
+        gl.glLightfv(gl.GL_LIGHT0,gl.GL_DIFFUSE,lightColor,0);       
+        gl.glLightfv(gl.GL_LIGHT0,gl.GL_SPECULAR,lightColor,0);
         
         // Get the position and direction of the first robot.
         robots[0].position = raceTracks[gs.trackNr].getLanePoint(0, 0);
         robots[0].direction = raceTracks[gs.trackNr].getLaneTangent(0, 0);
         
         // Draw the first robot.
-        robots[0].draw(gl, glu, glut, false, gs.tAnim);
+        robots[0].draw(gl, glu, glut, gs.showStick, gs.tAnim);
+        
+        // Draw other robots.
+        robots[3].direction = robots[2].direction = robots[1].direction = robots[0].direction;
+        robots[1].position.x = 0.5;
+        robots[2].position.x = 1;
+        robots[3].position.x = 1.5;
+        robots[1].draw(gl, glu, glut, gs.showStick, gs.tAnim);
+        robots[2].draw(gl, glu, glut, gs.showStick, gs.tAnim);
+        robots[3].draw(gl, glu, glut, gs.showStick, gs.tAnim);
         
         // Draw the race track.
         raceTracks[gs.trackNr].draw(gl, glu, glut);
@@ -227,20 +255,8 @@ public class RobotRace extends Base {
         // Draw the terrain.
         terrain.draw(gl, glu, glut);
         
-        // Unit box around origin.
-        glut.glutWireCube(1f);
-
-        // Move in x-direction.
-        gl.glTranslatef(2f, 0f, 0f);
-        
-        // Rotate 30 degrees, around z-axis.
-        gl.glRotatef(30f, 0f, 0f, 1f);
-        
-        // Scale in z-direction.
-        gl.glScalef(1f, 1f, 2f);
-
-        // Translated, rotated, scaled box.
-        glut.glutWireCube(1f);
+        // disable light
+        gl.glDisable(gl.GL_LIGHTING);
     }
     
     /**
@@ -250,7 +266,7 @@ public class RobotRace extends Base {
     public void drawAxisFrame() {
         // draw original point
         gl.glColor3f(1,1,0);
-        glut.glutSolidSphere(0.05f, 10, 10);       
+        glut.glutSolidSphere(0.025f, 50, 50);       
         
         // draw x axis
         gl.glColor3f(1, 0, 0);   
@@ -264,7 +280,7 @@ public class RobotRace extends Base {
         gl.glPushMatrix();    
         gl.glRotatef(90f, 0f, 1f, 0f);
         gl.glTranslatef(0f, 0f, 1f);
-        glut.glutSolidCone(0.05f, 0.2f, 10, 10);            
+        glut.glutSolidCone(0.025f, 0.1f, 50, 50);            
         gl.glPopMatrix();
         
         // draw y axis
@@ -279,7 +295,7 @@ public class RobotRace extends Base {
         gl.glPushMatrix();    
         gl.glRotatef(-90f, 1f, 0f, 0f);
         gl.glTranslatef(0f, 0f, 1f);
-        glut.glutSolidCone(0.05f, 0.2f, 10, 10);            
+        glut.glutSolidCone(0.025f, 0.1f, 50, 50);            
         gl.glPopMatrix();
         
         // draw z axis
@@ -294,7 +310,7 @@ public class RobotRace extends Base {
         gl.glPushMatrix();    
         gl.glRotatef(-90f, 0f, 0f, 1f);
         gl.glTranslatef(0f, 0f, 1f);
-        glut.glutSolidCone(0.05f, 0.2f, 10, 10);            
+        glut.glutSolidCone(0.025f, 0.1f, 50, 50);            
         gl.glPopMatrix();
     }
  
