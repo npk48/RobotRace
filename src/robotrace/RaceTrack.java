@@ -34,6 +34,62 @@ class RaceTrack {
     public void draw(GL2 gl, GLU glu, GLUT glut) {
         if (null == controlPoints) {
             // draw the test track
+            gl.glEnable(GL2.GL_COLOR_MATERIAL);
+            //Draw the bound lines of the track (5 lines indicate 4 lanes)
+            for (int laneBound = 0; laneBound <= 4; laneBound++) {
+                gl.glBegin(GL2.GL_LINE_LOOP);
+                double sampleDistance = 0.01;
+                for (double i = 0; i <= 1; i += sampleDistance) {
+                    Vector radius;
+                    radius = getTangent(i).cross(new Vector(0, 0, 1));
+                    radius.normalized();
+                    radius.x *= laneWidth;
+                    radius.y *= laneWidth;
+                    gl.glColor3f(0f, 0f, 0f);
+                    gl.glVertex3d(getPoint(i).x + (laneBound - 2) * 2 * radius.x, 
+                            getPoint(i).y + (laneBound - 2) * 2 * radius.y, 
+                            getPoint(i).z);
+                }
+                gl.glEnd();
+            }
+            for (int laneBound = 0; laneBound <= 3; laneBound++) {
+                gl.glBegin(GL2.GL_TRIANGLE_STRIP);
+                double sampleDistance = 0.0001;
+                for (double i = 0; i <= 1; i += sampleDistance) {
+                    Vector radius;
+                    radius = getTangent(i).cross(new Vector(0, 0, 1));
+                    radius.normalized();
+                    radius.x *= laneWidth;
+                    radius.y *= laneWidth;
+                    gl.glColor3f(0.6f, 0.6f, 0.6f);
+                    gl.glVertex3d(getPoint(i).x + (laneBound - 2) * 2 * radius.x, 
+                            getPoint(i).y + (laneBound - 2) * 2 * radius.y, 
+                            getPoint(i).z);
+                    gl.glVertex3d(getPoint(i + sampleDistance).x + (laneBound - 1) * 2 * radius.x, 
+                            getPoint(i + sampleDistance).y + (laneBound - 1) * 2 * radius.y, 
+                            getPoint(i + sampleDistance).z);
+                }
+                gl.glEnd();
+            }
+            gl.glBegin(GL2.GL_TRIANGLE_STRIP);
+            double sampleDistance = 0.0001;
+            for(double i = 0; i < 1; i += sampleDistance){
+                Vector radius = new Vector(0,0,0);
+                radius = getTangent(i).cross(new Vector(0,0,1));
+                radius.normalized();
+                radius.x *= laneWidth;
+                radius.y *= laneWidth;
+                gl.glColor3f(0.6f, 0.6f, 0.6f);
+                gl.glVertex3d(getPoint(i).x + 2 * 2 * radius.x, 
+                        getPoint(i).y + 2 * 2 * radius.y,
+                        getPoint(i).z);
+                gl.glVertex3d(getPoint(i + sampleDistance).x + 2 * 2 * radius.x,
+                        getPoint(i + sampleDistance).y + 2 * 2 * radius.y,
+                        getPoint(i+ sampleDistance).z - 1);
+            }
+            gl.glEnd();
+            
+            gl.glDisable(GL2.GL_COLOR_MATERIAL);
         } else {
             // draw the spline track
         }
@@ -45,9 +101,14 @@ class RaceTrack {
      */
     public Vector getLanePoint(int lane, double t) {
         if (null == controlPoints) {
-            return Vector.O; // <- code goes here
+            Vector pointAtT = getPoint(t);
+            Vector tangentAtT = getTangent(t);
+            Vector normal = tangentAtT.cross(Vector.Z).normalized();
+            
+            return pointAtT.add(normal.scale(lane * laneWidth));
         } else {
-            return Vector.O; // <- code goes here
+            Vector pointAtT = getPoint(t);
+            return pointAtT;
         }
     }
     
@@ -57,7 +118,8 @@ class RaceTrack {
      */
     public Vector getLaneTangent(int lane, double t) {
         if (null == controlPoints) {
-            return Vector.O; // <- code goes here
+            Vector tangentAtT = getTangent(t);
+            return tangentAtT; 
         } else {
             return Vector.O; // <- code goes here
         }
@@ -67,14 +129,47 @@ class RaceTrack {
      * Returns a point on the test track at 0 <= t < 1.
      */
     private Vector getPoint(double t) {
-        return Vector.O; // <- code goes here
+        Vector pointAtT;
+        if ((t >=0) && (t <= 1)) {  //When the value of t is legal
+             /*get the point vector when t*/
+            pointAtT = new Vector((10 * Math.cos(2 * Math.PI * t)), 
+                    (14 * Math.sin(2 * Math.PI * t)), 
+                    1);
+        
+            return pointAtT;
+        } else { 
+            return Vector.O;
+        }
     }
 
     /**
      * Returns a tangent on the test track at 0 <= t < 1.
      */
     private Vector getTangent(double t) {
-        return Vector.O; // <- code goes here
+        double tangentX;
+        double tangentY;
+        double tangentZ;
+        double length;
+        Vector tangentAtT;
+        /* using formula tangent vector T(t) = P'(t)/|P(t)|*/
+        /* where P'(t) is the derivation of P(t)*/
+        
+        if ((t >= 0) && (t <= 1)) {
+            //differentiate of x y z
+            tangentX = -20 * Math.PI * Math.sin(2 * Math.PI * t);
+            tangentY = 28 * Math.PI * Math.cos(2 * Math.PI * t);
+            tangentZ = 0;
+            length = Math.sqrt(Math.pow(tangentX, 2) + Math.pow(tangentY, 2) + Math.pow(tangentZ, 2));
+            
+            tangentX = tangentX / length;
+            tangentY = tangentY / length;
+            tangentZ = tangentZ / length;
+            
+            tangentAtT = new Vector(tangentX, tangentY, tangentZ);
+            return tangentAtT;
+        } else {
+            return Vector.O;
+        }
     }
     
     /**
