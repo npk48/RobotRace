@@ -103,9 +103,9 @@ class RaceTrack {
         if (null == controlPoints) {
             Vector pointAtT = getPoint(t);
             Vector tangentAtT = getTangent(t);
-            Vector normal = tangentAtT.cross(Vector.Z).normalized();
-            
-            return pointAtT.add(normal.scale(lane * laneWidth));
+            Vector normal = tangentAtT.cross(new Vector(0, 0, 1));
+            normal = normal.normalized();
+            return pointAtT.add(normal.scale((lane - 1) * 2 * laneWidth));
         } else {
             Vector pointAtT = getPoint(t);
             return pointAtT;
@@ -118,8 +118,7 @@ class RaceTrack {
      */
     public Vector getLaneTangent(int lane, double t) {
         if (null == controlPoints) {
-            Vector tangentAtT = getTangent(t);
-            return tangentAtT; 
+            return getTangent(t); 
         } else {
             return Vector.O; // <- code goes here
         }
@@ -128,18 +127,14 @@ class RaceTrack {
     /**
      * Returns a point on the test track at 0 <= t < 1.
      */
-    private Vector getPoint(double t) {
+    public Vector getPoint(double t) {
         Vector pointAtT;
-        if ((t >=0) && (t <= 1)) {  //When the value of t is legal
-             /*get the point vector when t*/
-            pointAtT = new Vector((10 * Math.cos(2 * Math.PI * t)), 
-                    (14 * Math.sin(2 * Math.PI * t)), 
-                    1);
+        /*get the point vector when t*/
+        pointAtT = new Vector((10 * Math.cos(2 * Math.PI * t)), 
+                (14 * Math.sin(2 * Math.PI * t)), 
+                1);
         
-            return pointAtT;
-        } else { 
-            return Vector.O;
-        }
+        return pointAtT;
     }
 
     /**
@@ -153,23 +148,18 @@ class RaceTrack {
         Vector tangentAtT;
         /* using formula tangent vector T(t) = P'(t)/|P(t)|*/
         /* where P'(t) is the derivation of P(t)*/
-        
-        if ((t >= 0) && (t <= 1)) {
-            //differentiate of x y z
-            tangentX = -20 * Math.PI * Math.sin(2 * Math.PI * t);
-            tangentY = 28 * Math.PI * Math.cos(2 * Math.PI * t);
-            tangentZ = 0;
-            length = Math.sqrt(Math.pow(tangentX, 2) + Math.pow(tangentY, 2) + Math.pow(tangentZ, 2));
+        //differentiate of x y z
+        tangentX = -20 * Math.PI * Math.sin(2 * Math.PI * t);
+        tangentY = 28 * Math.PI * Math.cos(2 * Math.PI * t);
+        tangentZ = 0;
+        length = Math.sqrt((tangentX * tangentX) + (tangentY * tangentY) + (tangentZ * tangentZ));
             
-            tangentX = tangentX / length;
-            tangentY = tangentY / length;
-            tangentZ = tangentZ / length;
+        tangentX = tangentX / length;
+        tangentY = tangentY / length;
+        tangentZ = tangentZ / length;
             
-            tangentAtT = new Vector(tangentX, tangentY, tangentZ);
-            return tangentAtT;
-        } else {
-            return Vector.O;
-        }
+        tangentAtT = new Vector(tangentX, tangentY, tangentZ);
+        return tangentAtT;
     }
     
     /**
