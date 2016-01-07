@@ -64,6 +64,10 @@ class Camera {
      */
     private void setHelicopterMode(GlobalState gs, Robot focus) {
         // code goes here ...
+        center = focus.position;
+        up = focus.direction;
+        eye = center;
+        eye = eye.add(new Vector(0, 0, 100));
     }
 
     /**
@@ -72,6 +76,14 @@ class Camera {
      */
     private void setMotorCycleMode(GlobalState gs, Robot focus) {
         // code goes here ...
+        center = focus.position;
+        up = Vector.Z;
+        eye = focus.direction.cross(Vector.Z);
+        eye = eye.normalized();
+        eye = eye.scale(50);
+        eye = center.add(eye);
+        eye = eye.add(new Vector(0, 0, 1));
+       
     }
 
     /**
@@ -80,6 +92,14 @@ class Camera {
      */
     private void setFirstPersonMode(GlobalState gs, Robot focus) {
         // code goes here ...
+        
+        eye = focus.position;
+        eye = eye.add(new Vector(0, 0, 0.5)); //camera at the upper surface of the track
+        eye = eye.add(focus.direction.normalized().scale(2));
+        up = Vector.Z;
+        center = focus.direction; 
+        center = center.normalized().scale(2);
+        center = center.add(eye);
     }
     
     /**
@@ -88,6 +108,25 @@ class Camera {
      */
     private void setAutoMode(GlobalState gs, Robot focus) {
         // code goes here ...
+        //Automatic change mode
+        //Each cycle 20 seconds, 5 seconds each mode
+        //Calculate time by using gs.tAnim
+        int autoModeSelector = (int)gs.tAnim/5 % 4;
+
+        switch (autoModeSelector) {
+            case 0:
+                setDefaultMode(gs);
+                break;
+            case 1:
+                setHelicopterMode(gs, focus);
+                break;
+            case 2:
+                setMotorCycleMode(gs, focus);
+                break;
+            case 3:
+                setFirstPersonMode(gs, focus);
+                break;
+        }
     }
 
 }

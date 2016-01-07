@@ -237,15 +237,16 @@ public class RobotRace extends Base {
         //robots[0].position = raceTracks[gs.trackNr].getLanePoint(0, 0);
         //robots[0].direction = raceTracks[gs.trackNr].getLaneTangent(0, 0);
         
-        //Get the moving 4 robots with time gs.tAnim gs.tAnim is in seconds, divided by 20 to be smooth
+        //Get the moving 4 robots with time gs.tAnim gs.tAnim is in seconds, divided by different values
+        //to make the robots have different speed.
         robots[0].position = raceTracks[gs.trackNr].getLanePoint(1, gs.tAnim/20);
         robots[0].direction = raceTracks[gs.trackNr].getLaneTangent(1, gs.tAnim/20);
-        robots[1].position = raceTracks[gs.trackNr].getLanePoint(2, gs.tAnim/20);
-        robots[1].direction = raceTracks[gs.trackNr].getLaneTangent(2, gs.tAnim/20);
-        robots[2].position = raceTracks[gs.trackNr].getLanePoint(3, gs.tAnim/20);
-        robots[2].direction = raceTracks[gs.trackNr].getLaneTangent(3, gs.tAnim/20);
-        robots[3].position = raceTracks[gs.trackNr].getLanePoint(4, gs.tAnim/20);
-        robots[3].direction = raceTracks[gs.trackNr].getLaneTangent(4, gs.tAnim/20);
+        robots[1].position = raceTracks[gs.trackNr].getLanePoint(2, gs.tAnim/35);
+        robots[1].direction = raceTracks[gs.trackNr].getLaneTangent(2, gs.tAnim/35);
+        robots[2].position = raceTracks[gs.trackNr].getLanePoint(3, gs.tAnim/18);
+        robots[2].direction = raceTracks[gs.trackNr].getLaneTangent(3, gs.tAnim/18);
+        robots[3].position = raceTracks[gs.trackNr].getLanePoint(4, gs.tAnim/40);
+        robots[3].direction = raceTracks[gs.trackNr].getLaneTangent(4, gs.tAnim/40);
         
         // Draw the first robot.
         robots[0].draw(gl, glu, glut, gs.showStick, gs.tAnim);
