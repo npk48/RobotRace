@@ -95,7 +95,7 @@ class RaceTrack {
             gl.glDisable(GL2.GL_COLOR_MATERIAL);
         } else {
             // draw the spline track
-            System.out.println("splinetrack");
+            
         }
     }
     
