@@ -1,8 +1,10 @@
 package robotrace;
 
 import com.jogamp.opengl.util.gl2.GLUT;
+import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.util.texture.Texture;
 
 /**
  * Implementation of a race track that is made from Bezier segments.
@@ -14,6 +16,7 @@ class RaceTrack {
 
     /** Array with 3N control points, where N is the number of segments. */
     private Vector[] controlPoints = null;
+
     
     /**
      * Constructor for the default track.
@@ -92,6 +95,7 @@ class RaceTrack {
             gl.glDisable(GL2.GL_COLOR_MATERIAL);
         } else {
             // draw the spline track
+            System.out.println("splinetrack");
         }
     }
     
@@ -168,7 +172,16 @@ class RaceTrack {
      */
     private Vector getCubicBezierPoint(double t, Vector P0, Vector P1,
                                                  Vector P2, Vector P3) {
-        return Vector.O; // <- code goes here
+        Vector cubicBezierPoint;
+        //Use formula
+        //P(u)=(1−u)^3*P0 +3u*(1−u)^2*P1 +3u^2(1−u)*P2 +u^3*P3
+        //Where u is t here
+        cubicBezierPoint = P0.scale(Math.pow(1 - t, 3));
+        cubicBezierPoint = cubicBezierPoint.add(P1.scale(3 * t * Math.pow(1 - t, 2)));
+        cubicBezierPoint = cubicBezierPoint.add(P2.scale(3 * Math.pow(t, 2) * (1 - t)));
+        cubicBezierPoint = cubicBezierPoint.add(P3.scale(Math.pow(t, 3)));
+        
+        return cubicBezierPoint; // <- code goes here
     }
     
     /**
@@ -177,6 +190,18 @@ class RaceTrack {
      */
     private Vector getCubicBezierTangent(double t, Vector P0, Vector P1,
                                                    Vector P2, Vector P3) {
-        return Vector.O; // <- code goes here
+        Vector cubicBezierTangent;
+        Vector tempVector;//Used to calculate by using formula
+        //The tangent is the derivation of the formula P(u)
+        //P'(u) = 3((P3-3P2+3P1-P0)*t^2+(2P2-4P1+2P0)*t+P1-P0)
+        //P'(u) = 
+        cubicBezierTangent = P1.subtract(P0);
+        tempVector = P2.scale(2).subtract(P1.scale(4)).add(P0.scale(2)).scale(t);
+        cubicBezierTangent = cubicBezierTangent.add(tempVector);
+        tempVector = P3.subtract(P2.scale(3).add(P1.scale(3)).subtract(P0)).scale(Math.pow(t, 2));
+        cubicBezierTangent = cubicBezierTangent.add(tempVector);
+        cubicBezierTangent = cubicBezierTangent.scale(3);
+        
+        return cubicBezierTangent; // <- code goes here
     }
 }
