@@ -5,11 +5,15 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
 import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
+import java.io.File;
 
 /**
  * Implementation of a race track that is made from Bezier segments.
  */
 class RaceTrack {
+    
+    private boolean Initialized =false;
     
     /** The width of one lane. The total width of the track is 4 * laneWidth. */
     private final static float laneWidth = 1.22f;
@@ -30,11 +34,39 @@ class RaceTrack {
     public RaceTrack(Vector[] controlPoints) {
         this.controlPoints = controlPoints;
     }
+    
+    private Texture tex;
+    
+    public Texture loadTexture(String file,GL2 gl) 
+    {
+        Texture result = null;
+        try {
+            // Try to load from local folder.
+            result = TextureIO.newTexture(new File(file), false);
+        } catch(Exception e1) {
+            // Try to load from /src folder instead.
+            try {
+                result = TextureIO.newTexture(new File("src/robotrace/" + file), false);
+            } catch(Exception e2) {              
+            }
+        }
+            
+        if(result != null) {
+            System.out.println("Loaded " + file);
+            result.enable(gl);
+        }
+        return result;
+    }
 
     /**
      * Draws this track, based on the control points.
      */
     public void draw(GL2 gl, GLU glu, GLUT glut) {
+        if(!Initialized)
+        {
+            Initialized = true;
+            tex = loadTexture("track.jpg",gl);
+        }
         if (null == controlPoints) {
             // draw the test track
             gl.glEnable(GL2.GL_COLOR_MATERIAL);
@@ -56,23 +88,62 @@ class RaceTrack {
                 gl.glEnd();
             }
             for (int laneBound = 0; laneBound <= 3; laneBound++) {
+                // bind texture
+                tex.enable(gl);
+                tex.bind(gl);
                 gl.glBegin(GL2.GL_TRIANGLE_STRIP);
                 double sampleDistance = 0.0001;
+                int count = 0;
                 for (double i = 0; i <= 1; i += sampleDistance) {
+                    double u1=0,u2=0,u3=0,u4 =0;
+                    
+                    switch (count%3) {
+                        case 0:
+                            u1=0;
+                            u2=0;
+                            u3=1;
+                            u4=0;
+                            break;
+                        case 1:
+                            u1=0;
+                            u2=1;
+                            u3=1;
+                            u4=1;
+                            break;
+                        case 2:
+                            u1=1;
+                            u2=1;
+                            u3=0;
+                            u4=1;
+                            break;
+                        default:
+                            break;
+                    }
+                    //double scale = (count%250)/250;
+                    double scale = count/((1/2.5)*1/sampleDistance);
                     Vector radius;
                     radius = getTangent(i).cross(new Vector(0, 0, 1));
                     radius.normalized();
                     radius.x *= laneWidth;
                     radius.y *= laneWidth;
-                    gl.glColor3f(0.6f, 0.6f, 0.6f);
+                    gl.glColor3f(0.2f, 0.2f, 0.2f);
                     gl.glVertex3d(getPoint(i).x + (laneBound - 2) * 2 * radius.x, 
                             getPoint(i).y + (laneBound - 2) * 2 * radius.y, 
                             getPoint(i).z);
+                    gl.glNormal3d(0,0,1);
+                    // tex coord
+                    gl.glTexCoord2d(u1*scale, u2*scale);
+                    
                     gl.glVertex3d(getPoint(i + sampleDistance).x + (laneBound - 1) * 2 * radius.x, 
                             getPoint(i + sampleDistance).y + (laneBound - 1) * 2 * radius.y, 
                             getPoint(i + sampleDistance).z);
+                    gl.glNormal3d(0,0,1);
+                    // tex coord
+                    gl.glTexCoord2d(u3*scale, u4*scale);
+                    count++;
                 }
                 gl.glEnd();
+                tex.disable(gl);
             }
             gl.glBegin(GL2.GL_TRIANGLE_STRIP);
             double sampleDistance = 0.0001;
@@ -82,7 +153,7 @@ class RaceTrack {
                 radius.normalized();
                 radius.x *= laneWidth;
                 radius.y *= laneWidth;
-                gl.glColor3f(0.6f, 0.6f, 0.6f);
+                gl.glColor3f(0.1f, 0.1f, 0.1f);
                 gl.glVertex3d(getPoint(i).x + 2 * 2 * radius.x, 
                         getPoint(i).y + 2 * 2 * radius.y,
                         getPoint(i).z);
@@ -109,7 +180,7 @@ class RaceTrack {
             Vector tangentAtT = getTangent(t);
             Vector normal = tangentAtT.cross(new Vector(0, 0, 1));
             normal = normal.normalized();
-            return pointAtT.add(normal.scale((lane - 1) * 2 * laneWidth));
+            return pointAtT.add(normal.scale((lane - 3) * 2 * laneWidth+0.5*laneWidth));
         } else {
             Vector pointAtT = getPoint(t);
             return pointAtT;
