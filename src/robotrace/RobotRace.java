@@ -5,6 +5,8 @@ import static javax.media.opengl.GL2.*;
 import java.awt.Font;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import java.util.Random;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * Handles all of the RobotRace graphics functionality,
@@ -287,7 +289,13 @@ public class RobotRace extends Base {
         raceTracks[gs.trackNr].draw(gl, glu, glut);
         
         // Draw the terrain.
-        terrain.draw(gl, glu, glut);
+        //terrain.draw(gl, glu, glut);
+        try {
+            //Draw the terrain 
+            terrain.draw(gl, glu, glut);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(RobotRace.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         // disable light
         gl.glDisable(gl.GL_LIGHTING);
