@@ -23,6 +23,8 @@ class Robot {
     /** The material from which this robot is built. */
     private final Material material;
     
+    public float t = 0;
+    
     /** each part of robot**/
     class Part
     {

@@ -4,6 +4,7 @@ import javax.media.opengl.GL;
 import static javax.media.opengl.GL2.*;
 import java.awt.Font;
 import com.jogamp.opengl.util.awt.TextRenderer;
+import java.util.Random;
 
 /**
  * Handles all of the RobotRace graphics functionality,
@@ -74,6 +75,10 @@ public class RobotRace extends Base {
     
     private final TextRenderer txt = new TextRenderer(new Font("Times New Roman", Font.PLAIN, 24), true, true);
     
+    private float t_previous = 0;
+    
+    private Random rnd = new Random();
+    
     /**
      * Constructs this robot race by initializing robots,
      * camera, track, and terrain.
@@ -112,10 +117,15 @@ public class RobotRace extends Base {
         
         // O-track
         raceTracks[1] = new RaceTrack(new Vector[] {
-            new Vector(-20,0,1),
-            new Vector(0,20,1),
-            new Vector(20,0,1),
-            new Vector(0,-20,1)
+            new Vector(-2,0,3),
+            new Vector(-2,0.5,3),
+            new Vector(-2,1,3),
+            new Vector(-2,1.5,3),
+            new Vector(-2,2,3),
+            new Vector(-1.5,2,3),
+            new Vector(-1.5,1.5,3),
+            new Vector(-1.5,1,3),
+            new Vector(-1.5,0.5,3),
         });
         
         // L-track
@@ -246,14 +256,20 @@ public class RobotRace extends Base {
         
         //Get the moving 4 robots with time gs.tAnim gs.tAnim is in seconds, divided by different values
         //to make the robots have different speed.
-        robots[0].position = raceTracks[gs.trackNr].getLanePoint(1,    gs.tAnim/20);
-        robots[0].direction = raceTracks[gs.trackNr].getLaneTangent(1, gs.tAnim/20);
-        robots[1].position = raceTracks[gs.trackNr].getLanePoint(2,    gs.tAnim/35);
-        robots[1].direction = raceTracks[gs.trackNr].getLaneTangent(2, gs.tAnim/35);
-        robots[2].position = raceTracks[gs.trackNr].getLanePoint(3,    gs.tAnim/18);
-        robots[2].direction = raceTracks[gs.trackNr].getLaneTangent(3, gs.tAnim/18);
-        robots[3].position = raceTracks[gs.trackNr].getLanePoint(4,    gs.tAnim/40);
-        robots[3].direction = raceTracks[gs.trackNr].getLaneTangent(4, gs.tAnim/40);
+        float step = gs.tAnim - t_previous;
+        robots[0].t += step/(rnd.nextInt(35)+10);
+        robots[0].position = raceTracks[gs.trackNr].getLanePoint(1,    robots[0].t);
+        robots[0].direction = raceTracks[gs.trackNr].getLaneTangent(1, robots[0].t);
+        robots[1].t += step/(rnd.nextInt(35)+10);
+        robots[1].position = raceTracks[gs.trackNr].getLanePoint(2,    robots[1].t);
+        robots[1].direction = raceTracks[gs.trackNr].getLaneTangent(2, robots[1].t);
+        robots[2].t += step/(rnd.nextInt(35)+10);
+        robots[2].position = raceTracks[gs.trackNr].getLanePoint(3,    robots[2].t);
+        robots[2].direction = raceTracks[gs.trackNr].getLaneTangent(3, robots[2].t);
+        robots[3].t += step/(rnd.nextInt(35)+10);
+        robots[3].position = raceTracks[gs.trackNr].getLanePoint(4,    robots[3].t);
+        robots[3].direction = raceTracks[gs.trackNr].getLaneTangent(4, robots[3].t);
+        t_previous = gs.tAnim;
         
         // Draw the first robot.
         robots[0].draw(gl, glu, glut, gs.showStick, gs.tAnim);

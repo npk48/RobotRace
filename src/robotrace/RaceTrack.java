@@ -166,7 +166,42 @@ class RaceTrack {
             gl.glDisable(GL2.GL_COLOR_MATERIAL);
         } else {
             // draw the spline track
-            
+            gl.glEnable(GL2.GL_COLOR_MATERIAL);
+            tex.enable(gl);
+            tex.bind(gl);
+            gl.glBegin(GL2.GL_TRIANGLE_STRIP);
+            for (int laneBound = 0; laneBound <= 3; laneBound++) {
+                for(int i = 0; i<controlPoints.length-3;i+=3)
+                {
+                    Vector P1 = controlPoints[i];
+                    Vector P2 = controlPoints[i+1];
+                    Vector P3 = controlPoints[i+2];
+                    Vector P4 = controlPoints[i+3];
+                    double sampleDistance = 0.1;
+                    for (double j=0;j<=1;j+=sampleDistance)
+                    {
+                        Vector P = getCubicBezierPoint(j,P1,P2,P3,P4);
+                        Vector radius = new Vector(0,0,0);
+                        radius = getCubicBezierTangent(j,P1,P2,P3,P4).cross(new Vector(0,0,1));
+                        radius.normalized();
+                        radius.x *= laneWidth;
+                        radius.y *= laneWidth;
+                        gl.glColor3f(0.2f, 0.2f, 0.2f);
+                        gl.glVertex3d(P.x + 2 * 2 * radius.x,P.y + 2 * 2 * radius.y,P.z);
+                        gl.glNormal3d(0,0,1);
+                        gl.glTexCoord2d(0, 0);
+                    
+                        Vector Pn = getCubicBezierPoint(j+sampleDistance,P1,P2,P3,P4);
+                        gl.glColor3f(0.2f, 0.2f, 0.2f);
+                        gl.glVertex3d(Pn.x + 2 * 2 * radius.x,Pn.y + 2 * 2 * radius.y,Pn.z);
+                        gl.glNormal3d(0,0,1);
+                        gl.glTexCoord2d(1, 1);
+                    }
+                }            
+            }         
+            gl.glEnd();
+            tex.disable(gl);
+            gl.glDisable(GL2.GL_COLOR_MATERIAL);
         }
     }
     
