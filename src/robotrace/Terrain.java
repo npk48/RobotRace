@@ -4,8 +4,12 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Implementation of the terrain.
@@ -24,6 +28,8 @@ class Terrain {
     private Texture tex;
     private Texture tex_water;
     private Texture tex_sand;
+    
+    private Random rnd = new Random();
     
     public Texture loadTexture(String file,GL2 gl) 
     {
@@ -45,18 +51,116 @@ class Terrain {
         }
         return result;
     }
+    
+    private void makeCylinder(GL2 gl, GLU glu, GLUT glut,float height, float base){
+        gl.glColor3f(0.64f,0.16f,0.16f);
+        gl.glPushMatrix();
+        gl.glRotatef(-90,1.0f,0.0f,0.0f);
+        glu.gluCylinder(glu.gluNewQuadric(), base, base-(0.2*base), height, 20, 20);
+        gl.glPopMatrix();
+    }
+
+    private void makeTree(GL2 gl, GLU glu, GLUT glut,float height, float base)
+    {
+        float angle;
+        makeCylinder(gl,glu,glut,height, base); 
+        gl.glTranslatef(0.0f, height, 0.0f);
+        height -= height*.2; base-= base*0.3;
+        for(int a= 0; a<3; a++)
+        {
+            angle = rnd.nextInt(50)+20;
+            if(angle >48)
+                angle = -(rnd.nextInt(50)+20);
+            if (height >1){
+                gl.glPushMatrix();
+                gl.glRotatef(angle,1,0.0f,1);
+                makeTree(gl,glu,glut,height,base);
+                gl.glPopMatrix();
+            }
+        }
+    }
+
+    private int tree = 0;
 
     /**
      * Draws the terrain.
      */
-    public void draw(GL2 gl, GLU glu, GLUT glut) {
+    public void draw(GL2 gl, GLU glu, GLUT glut) throws IllegalAccessException {
+        java.lang.reflect.Method method = null;
         if(!Initialized)
         {
             Initialized =true;
             tex = loadTexture("terrain.jpg",gl);
             tex_water = loadTexture("water.jpg",gl);
             tex_sand = loadTexture("sand.jpg",gl);
+            
+            try {
+              method = gl.getClass().getMethod("gl"+"GenLists", int.class);
+            } catch (SecurityException e) {} catch (NoSuchMethodException e) {}
+            
+            try {
+                tree = (int)method.invoke(gl, 1);
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(Terrain.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvocationTargetException ex) {
+                Logger.getLogger(Terrain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            //tree=gl.glGenLists(1);
+            try {
+              method = gl.getClass().getMethod("gl"+"NewList", int.class,int.class);
+            } catch (SecurityException e) {} catch (NoSuchMethodException e) {}
+            try {
+                method.invoke(gl,tree, gl.GL_COMPILE);
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(Terrain.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvocationTargetException ex) {
+                Logger.getLogger(Terrain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            makeTree(gl,glu,glut,4,0.2f);
+            try {
+              method = gl.getClass().getMethod("gl"+"EndList");
+            } catch (SecurityException e) {} catch (NoSuchMethodException e) {}
+            try {
+                method.invoke(gl);
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(Terrain.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvocationTargetException ex) {
+                Logger.getLogger(Terrain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            //gl.glEndList();
         }
+        gl.glPushMatrix();
+        gl.glTranslatef(15, 15, 0);
+        gl.glRotatef(90, 1.0f,0.0f,0.0f);
+        try {
+              method = gl.getClass().getMethod("gl"+"CallList", int.class);
+            } catch (SecurityException e) {} catch (NoSuchMethodException e) {}
+            
+            try {
+                method.invoke(gl,tree);
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(Terrain.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvocationTargetException ex) {
+                Logger.getLogger(Terrain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        gl.glPopMatrix();
+        gl.glPushMatrix();
+        gl.glTranslatef(-15, -15, 0);
+        gl.glRotatef(90, 1.0f,0.0f,0.0f);
+        try {
+              method = gl.getClass().getMethod("gl"+"CallList", int.class);
+            } catch (SecurityException e) {} catch (NoSuchMethodException e) {}
+            
+            try {
+                method.invoke(gl,tree);
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(Terrain.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvocationTargetException ex) {
+                Logger.getLogger(Terrain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        gl.glPopMatrix();
+        //gl.glCallList(tree);
+        
         gl.glEnable(GL2.GL_COLOR_MATERIAL);
         tex.enable(gl);
         tex.bind(gl);
