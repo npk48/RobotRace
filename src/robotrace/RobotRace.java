@@ -295,7 +295,7 @@ public class RobotRace extends Base {
             terrain.draw(gl, glu, glut);
         } catch (IllegalAccessException ex) {
             Logger.getLogger(RobotRace.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }//
         
         // disable light
         gl.glDisable(gl.GL_LIGHTING);
